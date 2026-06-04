@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Powerbuilding</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#0a0a0b;color:#e8e6e1;font-family:system-ui,-apple-system,sans-serif;max-width:460px;margin:0 auto;padding-bottom:80px}
+.wstrip{display:flex;gap:5px;overflow-x:auto;padding:14px 12px 6px}
+.wstrip::-webkit-scrollbar{display:none}
+.wb{flex:0 0 auto;background:#141416;border:1px solid #272729;color:#666;border-radius:8px;padding:7px 10px;font-size:13px;font-weight:700;cursor:pointer}
+.wb.on{background:#e05c2a;color:#fff;border-color:#e05c2a}
+.wb.dl.on{background:#3a7bd5;border-color:#3a7bd5}
+.wb.ts.on{background:#27a86a;border-color:#27a86a}
+.wmeta{padding:2px 14px 8px;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#555}
+.dtabs{display:flex;gap:5px;padding:0 12px 6px}
+.dt{flex:1;background:#141416;border:1px solid #272729;color:#666;border-radius:8px;padding:10px 4px;font-size:13px;font-weight:700;cursor:pointer}
+.dt.on{color:#e8e6e1;border-color:#e05c2a;border-width:2px}
+.dtick{color:#27a86a;font-size:10px;margin-right:2px}
+.hero{margin:6px 12px 0;background:#141416;border:1px solid #272729;border-radius:12px;padding:18px 16px 14px}
+.hcrumb{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#e05c2a;margin-bottom:8px;font-weight:600}
+.htitle{font-size:24px;font-weight:800;line-height:1.1;text-transform:uppercase}
+.hday{font-size:13px;color:#666;margin-top:6px}
+.hnote{margin-top:10px;font-size:12px;line-height:1.5;padding:8px 10px;border-radius:8px;border:1px solid}
+.hnote.dl{background:rgba(58,123,213,.08);border-color:rgba(58,123,213,.25);color:#6aa3f5}
+.hnote.ts{background:rgba(39,168,106,.08);border-color:rgba(39,168,106,.25);color:#4dcf8a}
+.prog{display:flex;align-items:center;gap:10px;padding:12px 14px 0}
+.pbar{flex:1;height:4px;background:#272729;border-radius:4px;overflow:hidden}
+.pfill{height:100%;background:#e05c2a;border-radius:4px;transition:width .3s}
+.ptxt{font-size:12px;color:#555;min-width:44px;text-align:right}
+.sec{margin-top:16px}
+.sh{display:flex;align-items:center;gap:8px;padding:0 14px 10px;cursor:pointer}
+.shbar{width:2px;height:14px;background:#e05c2a;border-radius:2px;flex-shrink:0}
+.shtitle{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px}
+.shcnt{margin-left:auto;font-size:11px;color:#444}
+.wu{margin:0 12px 8px;background:#141416;border:1px solid #272729;border-radius:10px;padding:11px 13px;display:flex;gap:10px}
+.wudot{width:5px;height:5px;border-radius:50%;background:#e05c2a;margin-top:7px;flex-shrink:0}
+.wun{font-size:14px;font-weight:700;text-transform:uppercase}
+.wut{font-size:12px;color:#666;margin-top:3px;line-height:1.4}
+.wum{font-size:11px;color:#e05c2a;margin-top:3px}
+.wutip{margin:2px 12px 0;font-size:11px;color:#444;font-style:italic}
+.ex{margin:0 12px 10px;background:#141416;border:1px solid #272729;border-radius:12px;overflow:hidden}
+.ex.done{border-color:rgba(39,168,106,.4)}
+.ex.core{border-color:rgba(58,123,213,.3);background:rgba(58,123,213,.04)}
+.ex.calf{border-color:rgba(212,160,68,.3)}
+.extop{padding:13px 14px 11px;display:flex;gap:11px}
+.exn{font-size:15px;color:#e05c2a;font-weight:800;width:22px;flex-shrink:0;padding-top:2px}
+.ex.done .exn{color:#27a86a}
+.ex.core .exn{color:#3a7bd5}
+.ex.calf .exn{color:#c8a02a}
+.exname{font-size:17px;font-weight:700;line-height:1.15}
+.exguide{font-size:12px;color:#666;margin-top:4px;line-height:1.5}
+.exnote{font-size:11px;color:#555;margin-top:5px;font-style:italic}
+.exmeta{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.tag{font-size:12px;padding:3px 8px;border-radius:5px;background:#1a1a1c;border:1px solid #2e2e31;color:#666}
+.tag b{color:#c8c4bb;font-weight:600}
+.tag.pct{color:#6aa3f5;border-color:rgba(106,163,245,.25);background:rgba(106,163,245,.06)}
+.tag.rpe{color:#d4a044;border-color:rgba(212,160,68,.25);background:rgba(212,160,68,.06)}
+.wubox{background:#101012;border-top:1px solid #1e1e20;padding:8px 14px;font-size:12px;color:#555}
+.wubox b{color:#888}
+.calcbox{background:#0f1520;border-top:1px solid rgba(106,163,245,.15);padding:8px 14px;font-size:13px;color:#6aa3f5}
+.calcbox b{color:#8ab8f8;font-size:15px;font-weight:700}
+.loadrow{background:#1a1a1c;border-top:1px dashed #272729;padding:11px 14px 12px;display:flex;gap:8px;align-items:flex-end}
+.lcol{flex:1}
+.lcol.sm{flex:0 0 55px}
+.lcol label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#555;margin-bottom:4px}
+.ghost{color:#3a3a3c;font-style:italic}
+.lbox{position:relative}
+.linput{font-size:19px;font-weight:700;width:100%;background:#0a0a0b;border:1.5px solid #272729;border-radius:8px;color:#e8e6e1;text-align:center;padding:9px 20px 9px 6px;outline:none}
+.linput.filled{border-color:#27a86a;color:#27a86a}
+.linput:focus{border-color:#e05c2a}
+.lunit{position:absolute;right:7px;top:50%;transform:translateY(-50%);font-size:11px;color:#444}
+.mini{font-size:16px;font-weight:700;width:100%;background:#0a0a0b;border:1.5px solid #272729;border-radius:8px;color:#e8e6e1;text-align:center;padding:9px 4px;outline:none}
+.mini:focus{border-color:#e05c2a}
+.rmest{background:#0f1520;border-top:1px solid rgba(106,163,245,.15);padding:8px 14px;font-size:12px;color:#6aa3f5}
+.rmest b{color:#8ab8f8;font-size:14px;font-weight:700}
+.finish{margin:20px 12px 0;padding:16px;border-radius:12px;border:1px solid #272729;background:#141416;text-align:center}
+.finish.rdy{border-color:rgba(39,168,106,.4);background:linear-gradient(180deg,rgba(39,168,106,.06),#141416)}
+.fmsg{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#555}
+.finish.rdy .fmsg{color:#27a86a}
+.fbtn{margin-top:10px;width:100%;padding:13px;border:none;border-radius:9px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;background:#1a1a1c;color:#444;cursor:not-allowed}
+.fbtn.on{background:#27a86a;color:#071a0e;cursor:pointer}
+.rmfab{position:fixed;bottom:20px;right:14px;background:#e05c2a;color:#fff;border:none;border-radius:50%;width:50px;height:50px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(224,92,42,.4);z-index:50}
+.rmoverlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;display:flex;align-items:flex-end;justify-content:center}
+.rmsheet{background:#141416;border-radius:16px 16px 0 0;padding:24px 20px 40px;width:100%;max-width:460px}
+.rmtitle{font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.rmsub{font-size:12px;color:#666;margin-bottom:20px;line-height:1.5}
+.rmrow{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.rmlb{font-size:14px;font-weight:700;text-transform:uppercase;color:#888;flex:1}
+.rminput{font-size:20px;font-weight:700;width:110px;background:#0a0a0b;border:1.5px solid #272729;border-radius:8px;color:#e8e6e1;text-align:center;padding:10px 8px;outline:none}
+.rminput:focus{border-color:#e05c2a}
+.rmkg{font-size:13px;color:#555}
+.rmdiv{height:1px;background:#272729;margin:16px 0}
+.rmsave{width:100%;padding:14px;border:none;border-radius:9px;background:#e05c2a;color:#fff;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-top:8px}
+.rmcancel{width:100%;padding:12px;border:none;border-radius:9px;background:transparent;color:#555;font-size:14px;cursor:pointer;margin-top:6px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<button class="rmfab" id="rmfab">1RM</button>
+<div class="rmoverlay" id="rmoverlay" style="display:none">
+  <div class="rmsheet">
+    <div class="rmtitle">I tuoi massimali</div>
+    <div class="rmsub">Inserisci i 1RM. I carichi si calcolano automaticamente da questi valori.</div>
+    <div class="rmrow"><span class="rmlb">Back Squat</span><input class="rminput" id="rm_sq" inputmode="decimal" placeholder="0"><span class="rmkg">kg</span></div>
+    <div class="rmrow"><span class="rmlb">Bench Press</span><input class="rminput" id="rm_bp" inputmode="decimal" placeholder="0"><span class="rmkg">kg</span></div>
+    <div class="rmrow"><span class="rmlb">Deadlift</span><input class="rminput" id="rm_dl" inputmode="decimal" placeholder="0"><span class="rmkg">kg</span></div>
+    <div class="rmrow"><span class="rmlb">Overhead Press</span><input class="rminput" id="rm_op" inputmode="decimal" placeholder="0"><span class="rmkg">kg</span></div>
+    <div class="rmdiv"></div>
+    <button class="rmsave" id="rmsave">Salva massimali</button>
+    <button class="rmcancel" id="rmcancel">Annulla</button>
+  </div>
+</div>
+<script>
+var store={},done={},rm={sq:0,bp:0,dl:0,op:0},week=1,dayKey="FB1",warmOpen=false;
+
+// STORAGE
+function saveAll(){
+  try{window.storage.set("pb_s",JSON.stringify(store));}catch(e){try{localStorage.setItem("pb_s",JSON.stringify(store));}catch(e){}}
+  try{window.storage.set("pb_d",JSON.stringify(done));}catch(e){try{localStorage.setItem("pb_d",JSON.stringify(done));}catch(e){}}
+  try{window.storage.set("pb_r",JSON.stringify(rm));}catch(e){try{localStorage.setItem("pb_r",JSON.stringify(rm));}catch(e){}}
+}
+function loadAll(){
+  function g(k){try{var r=window.storage.get(k);if(r&&r.then)return null;if(r&&r.value)return JSON.parse(r.value);}catch(e){}try{var v=localStorage.getItem(k);if(v)return JSON.parse(v);}catch(e){}return null;}
+  var s=g("pb_s");if(s)store=s;
+  var d=g("pb_d");if(d)done=d;
+  var r=g("pb_r");if(r)rm=r;
+}
+function loadAsync(){
+  var ps=[],keys=["pb_s","pb_d","pb_r"],vals=[null,null,null];
+  try{
+    keys.forEach(function(k,i){
+      var p=window.storage.get(k);
+      if(p&&p.then){ps.push(p.then(function(v){vals[i]=v&&v.value?JSON.parse(v.value):null;}));}
+      else{if(p&&p.value)vals[i]=JSON.parse(p.value);}
+    });
+    if(ps.length){Promise.all(ps).then(function(){if(vals[0])store=vals[0];if(vals[1])done=vals[1];if(vals[2])rm=vals[2];render();});}
+    else{render();}
+  }catch(e){render();}
+}
+
+// HELPERS
+function r2(x){return x==null?null:Math.round(x/2.5)*2.5;}
+function est1rm(w,reps,rpe){if(!w||!reps)return null;var rtf=Number(reps)+Math.max(0,10-(rpe==null?10:Number(rpe)));return w*(1+rtf/30);}
+function calcLoad(pc,key){var v=rm[key]||0;return v>0?r2(v*pc/100):null;}
+function wuStr(key){var v=rm[key]||0;if(!v)return null;function f(p){return r2(v*p);}return f(.4)+"×5 · "+f(.5)+"×4 · "+f(.6)+"×3 · "+f(.7)+"×2";}
+function keyOf(wn,dk,i){return"w"+wn+"_"+dk+"_"+i;}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function prevLoad(wn,name){
+  for(var pw=wn-1;pw>=1;pw--){var wk=W[pw];if(!wk)continue;for(var dk in wk.days){var exs=buildEx(wk.days[dk]);for(var i=0;i<exs.length;i++){if(exs[i].n===name){var rec=store["w"+pw+"_"+dk+"_"+i];if(rec&&rec.load)return rec.load;}}}}
+  return null;
+}
+
+// DATA
+var GUIDE={
+"Back Squat":"Schiena neutra, scendi sotto il parallelo, ginocchia in linea con le punte.",
+"Low-Bar Back Squat":"Bilanciere basso sui deltoidi posteriori. Più inclinazione busto, più catena posteriore.",
+"Deadlift":"Schiena neutra, brace dei dorsali, petto alto, togli il gioco dalla barra.",
+"Conventional Deadlift":"Schiena neutra, barra sulle tibie, spingi il pavimento lontano da te.",
+"Pause Deadlift":"Pausa 3 sec appena i dischi staccano da terra. Mantieni la tensione.",
+"Barbell Bench Press":"Arco naturale, piedi piantati, scapole retratte. Discesa controllata, spinta esplosiva.",
+"Pause Barbell Bench Press":"Pausa 2-3 sec sul petto senza rimbalzo. Poi spingi.",
+"Flat-Back Bench Press":"Scapole retratte, arco minimo, minimizza il leg drive.",
+"Barbell Floor Press":"Da sdraiato a terra. Controlla l'eccentrica, esplosivo in salita.",
+"Close-Grip Bench Press":"Presa larghezza spalle. Gomiti vicini al busto. Focus tricipiti.",
+"Overhead Press":"Smith machine o manubri (non bilanciere libero). Core contratto.",
+"Push Press":"Come OHP ma con leggera spinta di gambe per superare il punto critico.",
+"Leg Curl":"Contrazione completa. Discesa lenta 3 sec. Nessuno slancio.",
+"Nordic Ham Curl":"In ginocchio, piedi bloccati. Scendi lentamente. Usa elastico per risalire.",
+"Snatch-Grip Romanian Deadlift":"Presa larga. Schiena neutra, scendi fino allo stiramento dei femorali.",
+"Sumo Box Squat":"Squat sumo su box basso. Controlla la discesa.",
+"Leg Extension":"Estensione completa. Discesa lenta 3 sec.",
+"Banded Lateral Walk":"Camminata laterale con elastico. Alt: Hip Abduction Machine.",
+"Hip Abduction":"Macchina o band. Iso hold 1 sec in apertura massima.",
+"Standing Calf Raise":"Pausa 1-2 sec in basso (stiramento). Sali in punta. ROM completo.",
+"Seated Calf Raise":"Macchina seduto, ginocchio flesso. Allena il soleo (muscolo profondo).",
+"Weighted Pull-Up":"Presa 1.5x spalle, palmi avanti. Porta il petto alla barra.",
+"Chin-Up":"Presa supina (palmi verso di te). Petto alla barra.",
+"Eccentric-Accentuated Pull-Up":"Sali con salto/elastico. Scendi in 3-5 sec resistendo coi dorsali.",
+"Assisted Chin-Up":"Con macchina o elastico. Presa supina, petto alla barra.",
+"Neutral Grip Pull-Up":"Presa neutra (palmi che si guardano). Evita il cedimento.",
+"Single-Arm Lat Pulldown":"Lat machine a un braccio. Tira il gomito giù e dentro.",
+"Weighted Dip":"Busto inclinato avanti per il petto. Discesa fino a 90°.",
+"Deficit Push-Up":"Su maniglie o manubri per aumentare il range. Più rep possibili.",
+"Helms Row":"Petto su panca inclinata. Gomiti fuori e indietro a 45°.",
+"Pendlay Row":"Bilanciere da terra a ogni rep. Busto parallelo al suolo, tirata esplosiva.",
+"Chest-Supported T-Bar Row":"T-bar a petto appoggiato. Attento alla fatica lombare.",
+"Chest-Supported Dumbbell Row":"Manubri su panca inclinata. Tira coi dorsali, gomiti indietro.",
+"Lat Pull-Over":"Con manubrio o cavo. Senti lo stretch dei dorsali.",
+"Hammer Curl":"Presa neutra (palmi che si guardano). Gomiti fermi ai fianchi.",
+"Incline Dumbbell Curl":"Panca inclinata 45-60°. Un braccio alla volta, inizia dal debole.",
+"Barbell o EZ Bar Curl":"Gomiti fermi ai fianchi. Movimento controllato.",
+"Concentration Bicep Curl":"Seduto, gomito sulla coscia interna. Movimento lento.",
+"Floor Skull Crusher":"Bilanciere a terra. Arco dietro la testa, tocco morbido, gomiti fermi.",
+"Skull Crusher":"EZ bar su panca. Abbassa verso la fronte, gomiti fermi.",
+"Triceps Pressdown":"Pushdown ai cavi. Gomiti fermi ai fianchi, estensione completa.",
+"Face Pull":"Cavo con corda. Tira verso il naso aprendo i gomiti, retrai le scapole.",
+"Dumbbell Lateral Raise":"Gomiti leggermente flessi, sali all'altezza spalle, niente slancio.",
+"Incline Shrug":"A faccia in giù su panca inclinata. ROM pieno, squeeze in alto.",
+"Dumbbell Shrug":"Scrollate verticali. Pausa 1 sec in alto, stiramento in basso.",
+"Upright Row":"Cavi o manubri. Fermati quando i gomiti raggiungono le spalle.",
+"Dumbbell Incline Press":"Panca inclinata 45°. Scapole retratte e depresse.",
+"Bent Over Reverse Dumbbell Flye":"Busto piegato, aperture posteriori. MMC deltoidi posteriori.",
+"Hanging Leg Raise":"Appeso alla sbarra, ginocchia al petto lentamente.",
+"V Sit-Up":"Stringi gli addominali alti e bassi insieme.",
+"Bicycle Crunch":"Gomito al ginocchio opposto alternando. Arrotonda la schiena.",
+"Squat Walk-Out":"NON squattare. Stacca, cammina indietro, tieni, rientra. Pin alti + spotter.",
+"5\" Block Pull":"Stacco da blocchi alti 5\". Range ridotto.",
+"3\" Block Pull":"Stacco da blocchi alti 3\". Range ridotto.",
+"Dead Bug":"A terra schiena piatta. Estendi braccio e gamba opposti lentamente.",
+"Pallof Press":"Al cavo/elastico di lato. Spingi avanti resistendo alla torsione. Busto fermo.",
+"Side Plank (Knees)":"Plank laterale sulle ginocchia. Corpo allineato, fianchi su.",
+"Hanging Knee Raise":"Appeso alla sbarra. Porta le ginocchia al petto lentamente."
+};
+var CORE_ROT=["Dead Bug","Pallof Press","Side Plank (Knees)","Hanging Knee Raise"];
+var CORE_REPS=["8-10/lato","10/lato","20-30s/lato","10-12"];
+var CORE_PROG={
+"Dead Bug":"Prog → Ab Wheel dal ginocchio → in piedi",
+"Pallof Press":"Prog → pausa isometrica 3 sec a braccia estese",
+"Side Plank (Knees)":"Prog → side plank esteso → suitcase carry",
+"Hanging Knee Raise":"Prog → gambe semi-tese → tese"
+};
+var BIG={"Back Squat":"sq","Low-Bar Back Squat":"sq","Pause Deadlift":"dl","Deadlift":"dl","Conventional Deadlift":"dl","Barbell Bench Press":"bp","Pause Barbell Bench Press":"bp","Flat-Back Bench Press":"bp","Overhead Press":"op","Push Press":"op"};
+var RM_LB={sq:"Back Squat",bp:"Bench Press",dl:"Deadlift",op:"Overhead Press"};
+
+function P(n,wu,sets,reps,pl,pc,rpe,rest,note){return{n:n,wu:wu,sets:sets,reps:reps,pl:pl,pc:pc,rpe:rpe,rest:rest,note:note,isP:true};}
+function R(n,wu,sets,reps,rpe,rest,note){return{n:n,wu:wu,sets:sets,reps:reps,pl:null,pc:null,rpe:rpe,rest:rest,note:note,isP:false};}
+function SC(){return{n:"Seated Calf Raise",wu:0,sets:3,reps:"12-15",pl:null,pc:null,rpe:"8-9",rest:"1-2 min",note:"Macchina seduto. Ginocchio flesso. Allena il soleo.",isP:false,isCalf:true};}
+function CORE(ci){var nm=CORE_ROT[ci%4];return{n:nm,wu:null,sets:"2-3",reps:CORE_REPS[ci%4],rpe:"7-8",rest:"60 sec",note:CORE_PROG[nm],isP:false,isCore:true};}
+
+var W={
+1:{t:"odd",lb:"Full Body · Forza",days:{
+ FB1:{title:"FB1 — Squat · OHP",day:"Lunedì",ci:0,sc:true,ex:[P("Back Squat",4,1,"5","75-80%",77.5,7.5,"3-4 min","Top set. Lascia 1-2 rep nel serbatoio."),P("Back Squat",0,2,"8","70%",70,null,"3-4 min","Mantieni angolo schiena e forma costanti."),P("Overhead Press",2,3,"8","70%",70,null,"2-3 min","Resetta ogni rep. Core contratto."),R("Leg Curl",1,3,"6-8",7,"1-2 min","Contrazione completa. Discesa lenta 3 sec."),R("Helms Row",1,3,"12-15",9,"1-2 min","Petto su panca inclinata. Gomiti fuori e indietro a 45°."),R("Hammer Curl",0,3,"20-25",10,"1-2 min","Presa neutra. Gomiti bloccati ai fianchi.")]},
+ FB2:{title:"FB2 — Deadlift · Bench",day:"Mercoledì",ci:1,sc:false,ex:[P("Deadlift",4,3,"4","80%",80,null,"3-5 min","Schiena neutra. Barra sulle tibie. Spingi il pavimento."),P("Barbell Bench Press",4,1,"3","82.5-87.5%",85,8.5,"4-5 min","Top set. Lascia 1-2 rep. Arco naturale, piedi piantati."),P("Barbell Bench Press",0,2,"10","67.5%",67.5,null,"2-3 min","Pausa 1 sec sul petto ogni rep."),R("Hip Abduction",0,3,"15-20",9,"1-2 min","Macchina o band. Iso hold 1 sec in cima."),R("Weighted Pull-Up",1,3,"5-8",8,"3-4 min","Presa 1.5x spalle. Porta il petto alla barra."),R("Floor Skull Crusher",1,3,"10-12",8,"1-2 min","Bilanciere a terra. Arco dietro la testa."),R("Standing Calf Raise",1,3,"8-10",9,"1-2 min","Pausa 1-2 sec in basso. ROM completo.")]},
+ FB3:{title:"FB3 — Squat · Dip",day:"Giovedì",ci:2,sc:false,ex:[P("Back Squat",4,3,"4","80%",80,null,"3-4 min","Pressione salda upper back sulla barra."),R("Weighted Dip",2,3,"8",8,"2-3 min","Busto inclinato avanti. Discesa fino a 90°."),R("Hanging Leg Raise",0,3,"10-12",9,"1-2 min","Ginocchia al petto. Reps controllati."),R("Lat Pull-Over",1,3,"12-15",8,"1-2 min","Con manubrio o cavo. Senti lo stretch dei dorsali."),R("Incline Dumbbell Curl",1,3,"12-15",9,"1-2 min","Panca 45-60°. Un braccio alla volta."),R("Face Pull",0,4,"15-20",9,"1-2 min","Cavo con corda. Apri i gomiti verso l'esterno.")]},
+ FB4:{title:"FB4 — Deadlift pause · Bench pause",day:"Sabato",ci:3,sc:true,ex:[P("Pause Deadlift",4,4,"2","75%",75,null,"3-4 min","Pausa 3 sec appena i dischi staccano da terra."),P("Pause Barbell Bench Press",3,3,"5","75%",75,null,"2-3 min","Pausa 2-3 sec sul petto senza rimbalzo."),R("Chest-Supported T-Bar Row",1,3,"10",7,"1-2 min","Attento alla fatica lombare. Resta leggero."),R("Nordic Ham Curl",0,3,"6-8",8,"1-2 min","Piedi bloccati. Scendi lentamente."),R("Dumbbell Shrug",0,3,"20-25",9,"1-2 min","Scrollate verticali. Stretch in basso, squeeze in alto.")]},
+}},
+2:{t:"even",lb:"Upper / Lower · Ipertrofia",days:{
+ L1:{title:"Lower 1",day:"Lunedì",ci:0,sc:true,ex:[P("Deadlift",4,3,"3","80%",80,null,"3-5 min","Brace dei dorsali. Petto alto."),R("Sumo Box Squat",2,2,"8",7,"2-3 min","High-bar: Sumo Box. Low-bar: Pause High-Bar (2 sec)."),R("Leg Curl",1,3,"6-8",8,"1-2 min","Discesa lenta 3 sec."),R("Standing Calf Raise",1,3,"8-10",9,"1-2 min","Pausa 1-2 sec in basso."),R("Hanging Leg Raise",0,3,"10-12",8,"1-2 min","Ginocchia al petto.")]},
+ U1:{title:"Upper 1",day:"Mercoledì",ci:1,sc:false,ex:[P("Barbell Bench Press",4,1,"2","85-90%",87.5,8,"4-5 min","Top set. Lascia ~2 rep nel serbatoio."),P("Barbell Bench Press",0,3,"6","77.5%",77.5,null,"3-4 min","Arco comodo. Leggera pausa sul petto."),R("Chin-Up",1,3,"8-10",8,"2-3 min","Presa supina (palmi verso di te)."),P("Overhead Press",2,3,"4","80%",80,null,"2-3 min","Stringi i glutei. Premi su e leggermente indietro."),R("Chest-Supported Dumbbell Row",1,3,"12-15",9,"1-2 min","Su panca inclinata. Tira coi dorsali."),R("Face Pull",0,2,"15-20",9,"30 sec","[A] Cavo con corda. Retrai le scapole."),R("Dumbbell Lateral Raise",0,2,"15-20",9,"30 sec","[A] Arco verso l'esterno."),R("Concentration Bicep Curl",0,3,"12-15",9,"30 sec","[B] Gomito sulla coscia. Movimento lento."),R("Triceps Pressdown",0,3,"12-15",9,"30 sec","[B] Cavi o band.")]},
+ L2:{title:"Lower 2",day:"Giovedì",ci:2,sc:false,ex:[P("Back Squat",4,3,"6","75%",75,null,"3-4 min","Siediti indietro e in giù. Upper back saldo."),R("Snatch-Grip Romanian Deadlift",2,3,"10",7,"2-3 min","Presa larga. MMC con i femorali."),R("Leg Extension",1,3,"12-15",9,"1-2 min","Estensione completa. Discesa lenta 3 sec."),R("Standing Calf Raise",0,4,"15-20",9,"1-2 min","Enfatizza la connessione mente-muscolo."),R("Banded Lateral Walk",0,3,"15-20",9,"1-2 min","Punte leggermente in fuori. MMC coi glutei."),R("V Sit-Up",0,3,"12-15",9,"1-2 min","Stringi gli addominali alti e bassi insieme.")]},
+ U2:{title:"Upper 2",day:"Sabato",ci:3,sc:false,ex:[R("Close-Grip Bench Press",3,3,"12",7,"2-3 min","Presa larghezza spalle. Gomiti vicini al busto."),R("Pendlay Row",1,3,"10",7,"2-3 min","Da terra a ogni rep. Busto parallelo al suolo."),R("Weighted Dip",2,3,"6",7,"2-3 min","Busto inclinato avanti. Discesa fino a 90°."),R("Eccentric-Accentuated Pull-Up",1,2,"AMRAP",10,"2-3 min","Negativa 3 sec ogni rep."),R("Incline Shrug",0,2,"15-20",9,"30 sec","[A] A faccia in giù su panca inclinata."),R("Upright Row",0,2,"15-20",9,"30 sec","[A] Fermati quando i gomiti raggiungono le spalle."),R("Barbell o EZ Bar Curl",0,3,"12-15",9,"30 sec","[B] MMC coi bicipiti."),R("Skull Crusher",0,3,"8-10",8,"30 sec","[B] Su panca. Tensione costante.")]},
+}},
+3:{t:"odd",lb:"Full Body · Forza",days:{
+ FB1:{title:"FB1 — Squat · OHP",day:"Lunedì",ci:0,sc:true,ex:[P("Back Squat",4,1,"8","72.5-77.5%",75,8.5,"3-4 min","Top set. Lascia 1-2 rep. Spingi!"),P("Back Squat",0,2,"6","75%",75,null,"3-4 min","Forma costante."),P("Overhead Press",2,3,"8","72.5%",72.5,null,"2-3 min","Resetta ogni rep."),R("Leg Curl",1,2,"8-10",7,"1-2 min","Discesa lenta 3 sec."),R("Helms Row",1,3,"12-15",9,"1-2 min","Gomiti fuori e indietro a 45°."),R("Hammer Curl",0,2,"20-25",10,"1-2 min","Gomiti bloccati.")]},
+ FB2:{title:"FB2 — Deadlift · Bench",day:"Mercoledì",ci:1,sc:false,ex:[P("Deadlift",4,4,"2","85%",85,null,"3-5 min","Forma salda."),P("Barbell Bench Press",3,1,"6","75-80%",77.5,8.5,"4-5 min","Top set. Lascia 1-2 rep."),P("Barbell Bench Press",0,2,"8","72.5%",72.5,null,"2-3 min","Pausa 1 sec sul petto."),R("Hip Abduction",0,2,"15-20",9,"1-2 min","Iso hold 1 sec."),R("Weighted Pull-Up",1,3,"5-8",8,"3-4 min","Presa 1.5x spalle."),R("Floor Skull Crusher",1,3,"10-12",8,"1-2 min","Arco dietro la testa."),R("Standing Calf Raise",1,3,"8",9,"1-2 min","Pausa 1-2 sec in basso.")]},
+ FB3:{title:"FB3 — Squat · Dip",day:"Giovedì",ci:2,sc:false,ex:[P("Back Squat",4,4,"4","80%",80,null,"3-4 min","Upper back saldo."),R("Weighted Dip",2,3,"8",8,"2-3 min","Discesa fino a 90°."),R("Hanging Leg Raise",0,3,"10-12",9,"1-2 min","Ginocchia al petto."),R("Lat Pull-Over",1,3,"12-15",8,"1-2 min","Stretch e squeeze dorsali."),R("Incline Dumbbell Curl",1,2,"12-15",9,"1-2 min","Un braccio alla volta."),R("Face Pull",0,4,"15-20",9,"1-2 min","Retrai le scapole.")]},
+ FB4:{title:"FB4 — Deadlift pause · Bench pause",day:"Sabato",ci:3,sc:true,ex:[P("Pause Deadlift",4,4,"2","77.5%",77.5,null,"3-4 min","Pausa 3 sec."),P("Pause Barbell Bench Press",3,4,"5","75%",75,null,"2-3 min","Pausa 2-3 sec sul petto."),R("Chest-Supported T-Bar Row",1,3,"10",7,"1-2 min","Resta leggero."),R("Nordic Ham Curl",0,3,"6-8",8,"1-2 min","Scendi lentamente."),R("Dumbbell Shrug",0,3,"20-25",9,"1-2 min","Stretch in basso, squeeze in alto.")]},
+}},
+4:{t:"even",lb:"Upper / Lower · Ipertrofia",days:{
+ L1:{title:"Lower 1",day:"Lunedì",ci:0,sc:true,ex:[P("Deadlift",4,1,"2","87.5-92.5%",90,9,"4-5 min","Top set! Vicino al PR."),P("Deadlift",0,3,"3","80%",80,null,"3-5 min","Brace dei dorsali."),R("Sumo Box Squat",2,2,"8",7,"2-3 min","Pausa 2 sec se low-bar."),R("Leg Curl",1,3,"6-8",8,"1-2 min","Discesa lenta 3 sec."),R("Standing Calf Raise",1,3,"8-10",9,"1-2 min","Pausa 1-2 sec in basso."),R("Hanging Leg Raise",0,3,"10-12",8,"1-2 min","Ginocchia al petto.")]},
+ U1:{title:"Upper 1",day:"Mercoledì",ci:1,sc:false,ex:[R("Flat-Back Bench Press",3,3,"10",7,"3-4 min","Scapole retratte. Minimizza leg drive."),R("Chin-Up",1,3,"8-10",8,"2-3 min","Presa supina."),P("Push Press",2,3,"3/3","80%",80,null,"2-3 min","Prime 3 strict, ultime 3 push press."),R("Chest-Supported Dumbbell Row",1,3,"12-15",9,"1-2 min","Panca inclinata."),R("Face Pull",0,3,"15-20",9,"30 sec","[A] Retrai le scapole."),R("Dumbbell Lateral Raise",0,3,"15-20",9,"30 sec","[A] Arco verso l'esterno."),R("Concentration Bicep Curl",0,3,"12-15",9,"30 sec","[B] MMC bicipiti."),R("Triceps Pressdown",0,3,"12-15",9,"30 sec","[B] Cavi o band.")]},
+ L2:{title:"Lower 2",day:"Giovedì",ci:2,sc:false,ex:[P("Back Squat",4,3,"6","75%",75,null,"3-4 min","Upper back saldo."),R("5\" Block Pull",3,2,"4",8,"2-3 min","Block pull da blocchi alti 5 pollici."),R("Leg Extension",1,3,"12-15",9,"1-2 min","MMC coi quadricipiti."),R("Standing Calf Raise",0,4,"15-20",9,"1-2 min","MMC polpacci."),R("Banded Lateral Walk",0,3,"15-20",9,"1-2 min","MMC glutei."),R("V Sit-Up",0,3,"12-15",9,"1-2 min","Addominali alti e bassi insieme.")]},
+ U2:{title:"Upper 2",day:"Sabato",ci:3,sc:false,ex:[R("Weighted Dip",2,3,"6",7,"2-3 min","Discesa fino a 90°."),R("Pendlay Row",1,3,"10",7,"2-3 min","Da terra a ogni rep."),R("Deficit Push-Up",2,2,"AMRAP",7,"2-3 min","Su maniglie. Più rep possibili."),R("Eccentric-Accentuated Pull-Up",1,2,"AMRAP",10,"2-3 min","Negativa 3 sec."),R("Incline Shrug",0,2,"15-20",9,"30 sec","[A] A faccia in giù."),R("Bent Over Reverse Dumbbell Flye",0,2,"15-20",9,"30 sec","[A] MMC deltoidi posteriori."),R("Barbell o EZ Bar Curl",0,3,"12-15",9,"30 sec","[B] MMC bicipiti."),R("Skull Crusher",0,3,"8-10",9,"30 sec","[B] Su panca.")]},
+}},
+5:{t:"odd",lb:"Full Body · Forza",days:{
+ FB1:{title:"FB1 — Squat · OHP",day:"Lunedì",ci:0,sc:true,ex:[P("Back Squat",4,1,"3","82.5-87.5%",85,8.5,"3-4 min","Vicino al PR di 3 reps."),P("Back Squat",0,2,"4","80%",80,null,"3-4 min","Forma costante."),P("Overhead Press",2,3,"8","75%",75,null,"2-3 min","Resetta ogni rep."),R("Leg Curl",1,2,"8-10",8,"1-2 min","Discesa lenta 3 sec."),R("Helms Row",1,3,"12-15",9,"1-2 min","Gomiti fuori e indietro a 45°."),R("Hammer Curl",0,2,"20-25",10,"1-2 min","Gomiti bloccati.")]},
+ FB2:{title:"FB2 — Deadlift · Bench",day:"Mercoledì",ci:1,sc:false,ex:[P("Deadlift",4,3,"3","85%",85,null,"3-5 min","Brace dei dorsali."),P("Barbell Bench Press",3,1,"4","82.5-87.5%",85,9,"4-5 min","Vicino al PR di 4 reps."),P("Barbell Bench Press",0,2,"6","80%",80,null,"2-3 min","Pausa 1 sec sul petto."),R("Hip Abduction",0,3,"15-20",9,"1-2 min","Iso hold 1 sec."),R("Weighted Pull-Up",1,3,"5-8",8,"3-4 min","Presa 1.5x spalle."),R("Floor Skull Crusher",1,3,"10-12",8,"1-2 min","Arco dietro la testa."),R("Standing Calf Raise",1,3,"8",9,"1-2 min","Pausa 1-2 sec in basso.")]},
+ FB3:{title:"FB3 — Squat · Dip",day:"Giovedì",ci:2,sc:false,ex:[P("Back Squat",4,3,"6","77.5%",77.5,null,"3-4 min","Upper back saldo."),R("Weighted Dip",2,3,"8",8,"2-3 min","Discesa fino a 90°."),R("Hanging Leg Raise",0,3,"10-12",9,"1-2 min","Ginocchia al petto."),R("Lat Pull-Over",1,3,"12-15",9,"1-2 min","Stretch e squeeze dorsali."),R("Incline Dumbbell Curl",1,2,"12-15",9,"1-2 min","Un braccio alla volta."),R("Face Pull",0,4,"15-20",9,"1-2 min","Retrai le scapole.")]},
+ FB4:{title:"FB4 — Deadlift pause · Bench pause",day:"Sabato",ci:3,sc:true,ex:[P("Pause Deadlift",4,4,"2","82.5%",82.5,null,"3-4 min","Pausa 3 sec."),P("Pause Barbell Bench Press",3,3,"6","75%",75,null,"2-3 min","Pausa 2-3 sec sul petto."),R("Chest-Supported T-Bar Row",1,3,"10",7,"1-2 min","Resta leggero."),R("Nordic Ham Curl",0,3,"6-8",8,"1-2 min","Scendi lentamente."),R("Dumbbell Shrug",0,3,"20-25",10,"1-2 min","Stretch in basso, squeeze in alto.")]},
+}},
+6:{t:"even",lb:"Upper / Lower · SEMI-DELOAD",dl:true,days:{
+ L1:{title:"Lower 1",day:"Lunedì",ci:0,sc:true,ex:[P("Deadlift",4,3,"4","80%",80,null,"3-5 min","Brace dei dorsali."),R("Sumo Box Squat",2,2,"8",5,"2-3 min","RPE ridotto — scarico."),R("Leg Curl",1,3,"6-8",7,"1-2 min","Discesa lenta 3 sec."),R("Standing Calf Raise",1,3,"8-10",7,"1-2 min","Pausa 1-2 sec in basso."),R("Hanging Leg Raise",0,3,"10-12",8,"1-2 min","Ginocchia al petto.")]},
+ U1:{title:"Upper 1",day:"Mercoledì",ci:1,sc:false,ex:[P("Barbell Bench Press",3,2,"7","77.5%",77.5,null,"3-4 min","Pausa sul petto. RPE ridotto."),R("Chin-Up",1,2,"8-10",7,"2-3 min","RPE ridotto."),P("Overhead Press",2,3,"4","82.5%",82.5,null,"1-2 min","Stringi i glutei."),R("Chest-Supported Dumbbell Row",1,2,"12-15",7,"3-4 min","Panca inclinata."),R("Face Pull",0,3,"15-20",8,"30 sec","[A] RPE ridotto."),R("Dumbbell Lateral Raise",0,3,"15-20",8,"30 sec","[A] RPE ridotto."),R("Concentration Bicep Curl",0,3,"12-15",8,"30 sec","[B] RPE ridotto."),R("Triceps Pressdown",0,3,"12-15",8,"30 sec","[B] RPE ridotto.")]},
+ L2:{title:"Lower 2",day:"Giovedì",ci:2,sc:false,ex:[P("Back Squat",4,1,"1","90-95%",92.5,9,"4-5 min","UNICA serie pesante! Tecnica perfetta!"),P("Low-Bar Back Squat",0,2,"7","75%",75,null,"3-4 min","RPE ridotto."),R("Snatch-Grip Romanian Deadlift",2,2,"10",6,"2-3 min","RPE ridotto."),R("Leg Extension",1,2,"12-15",8,"1-2 min","MMC coi quad."),R("Standing Calf Raise",0,3,"15-20",8,"1-2 min","MMC polpacci."),R("Banded Lateral Walk",0,3,"15-20",8,"1-2 min","MMC glutei."),R("V Sit-Up",0,3,"12-15",8,"1-2 min","Addominali alti e bassi.")]},
+ U2:{title:"Upper 2",day:"Sabato",ci:3,sc:false,ex:[R("Barbell Floor Press",2,3,"8",7,"2-3 min","Controlla l'eccentrica. Esplosivo in salita."),R("Pendlay Row",1,2,"10",7,"2-3 min","Da terra a ogni rep."),R("Weighted Dip",2,3,"6",7,"2-3 min","Discesa fino a 90°."),R("Neutral Grip Pull-Up",1,2,"10",7,"2-3 min","Presa neutra. Evita il cedimento."),R("Incline Shrug",0,2,"15-20",8,"30 sec","[A] RPE ridotto."),R("Upright Row",0,2,"15-20",8,"30 sec","[A] RPE ridotto."),R("Barbell o EZ Bar Curl",0,2,"12-15",8,"30 sec","[B] RPE ridotto."),R("Skull Crusher",0,2,"8-10",8,"30 sec","[B] Su panca.")]},
+}},
+7:{t:"odd",lb:"Full Body · Forza",days:{
+ FB1:{title:"FB1 — Squat · OHP",day:"Lunedì",ci:0,sc:true,ex:[P("Back Squat",4,1,"3","85-90%",87.5,8.5,"4-5 min","Aggiungi peso da S5 o migliora bar speed."),P("Back Squat",0,2,"2","85%",85,null,"3-4 min","Focus tecnica."),P("Overhead Press",2,4,"8","70%",70,null,"2-3 min","4 serie questa settimana!"),R("Leg Curl",1,2,"8-10",8,"1-2 min","Discesa lenta 3 sec."),R("Helms Row",1,2,"12-15",9,"1-2 min","Gomiti fuori e indietro a 45°."),R("Hammer Curl",0,2,"20-25",10,"1-2 min","Gomiti bloccati.")]},
+ FB2:{title:"FB2 — Deadlift pause · Bench",day:"Mercoledì",ci:1,sc:false,ex:[P("Pause Deadlift",4,4,"2","75%",75,null,"3-4 min","Pausa 3 sec."),P("Barbell Bench Press",4,1,"3","85-90%",87.5,9,"4-5 min","Vicino al PR di 3 reps."),P("Barbell Bench Press",0,2,"4","80%",80,null,"3-4 min","Focus tecnica esplosiva."),R("Hip Abduction",0,3,"15-20",9,"1-2 min","Iso hold 1 sec."),R("Weighted Pull-Up",1,3,"3-5",7,"3-4 min","Presa 1.5x spalle."),R("Floor Skull Crusher",1,3,"10-12",8,"1-2 min","Arco dietro la testa."),R("Standing Calf Raise",1,3,"8",9,"1-2 min","Pausa 1-2 sec in basso.")]},
+ FB3:{title:"FB3 — Squat · Dip",day:"Giovedì",ci:2,sc:false,ex:[P("Back Squat",4,4,"6","77.5%",77.5,null,"3-4 min","Upper back saldo."),R("Weighted Dip",2,3,"8",8,"2-3 min","Discesa fino a 90°."),R("Hanging Leg Raise",0,3,"10-12",9,"1-2 min","Ginocchia al petto."),R("Lat Pull-Over",1,3,"12-15",9,"1-2 min","Stretch e squeeze dorsali."),R("Incline Dumbbell Curl",1,2,"12-15",9,"1-2 min","Un braccio alla volta."),R("Face Pull",0,3,"15-20",9,"1-2 min","Retrai le scapole.")]},
+ FB4:{title:"FB4 — Deadlift · Bench pause",day:"Sabato",ci:3,sc:true,ex:[P("Deadlift",4,1,"3","85-90%",87.5,8.5,"4-5 min","Tripla pesante RPE 8-9."),P("Pause Barbell Bench Press",3,4,"6","75%",75,null,"2-3 min","Pausa 2-3 sec sul petto."),R("Chest-Supported T-Bar Row",1,3,"10",7,"2-3 min","Resta leggero."),R("Nordic Ham Curl",0,3,"6-8",8,"1-2 min","Scendi lentamente."),R("Dumbbell Shrug",0,3,"20-25",9,"1-2 min","Stretch in basso, squeeze in alto.")]},
+}},
+8:{t:"even",lb:"Upper / Lower · Ipertrofia",days:{
+ L1:{title:"Lower 1",day:"Lunedì",ci:0,sc:true,ex:[P("Deadlift",4,3,"5","80%",80,null,"3-5 min","Brace dei dorsali."),R("Sumo Box Squat",2,2,"8",7,"2-3 min","Pausa 2 sec se low-bar."),R("Leg Curl",1,3,"6-8",8,"1-2 min","Discesa lenta 3 sec."),R("Standing Calf Raise",1,3,"8-10",9,"1-2 min","Pausa 1-2 sec in basso."),R("Hanging Leg Raise",0,3,"10-12",8,"1-2 min","Ginocchia al petto.")]},
+ U1:{title:"Upper 1",day:"Mercoledì",ci:1,sc:false,ex:[R("Flat-Back Bench Press",3,3,"10",7,"3-4 min","Scapole retratte. Minimizza leg drive."),R("Chin-Up",1,3,"8-10",8,"2-3 min","Presa supina."),P("Push Press",2,3,"3/3","82.5%",82.5,null,"1-2 min","Prime 3 strict, ultime 3 push press."),R("Chest-Supported Dumbbell Row",1,3,"12-15",9,"3-4 min","Panca inclinata."),R("Face Pull",0,3,"15-20",9,"30 sec","[A] Retrai le scapole."),R("Dumbbell Lateral Raise",0,3,"15-20",9,"30 sec","[A] Arco verso l'esterno."),R("Concentration Bicep Curl",0,3,"12-15",9,"30 sec","[B] MMC bicipiti."),R("Triceps Pressdown",0,3,"12-15",9,"30 sec","[B] Cavi o band.")]},
+ L2:{title:"Lower 2",day:"Giovedì",ci:2,sc:false,ex:[P("Low-Bar Back Squat",4,3,"7","75%",75,null,"3-4 min","Siediti indietro e in giù."),R("3\" Block Pull",3,2,"4",8,"4-5 min","Block pull da blocchi alti 3 pollici."),R("Leg Extension",1,3,"12-15",9,"1-2 min","MMC coi quad."),R("Standing Calf Raise",0,4,"15-20",9,"1-2 min","MMC polpacci."),R("Banded Lateral Walk",0,3,"15-20",9,"1-2 min","MMC glutei."),R("V Sit-Up",0,3,"12-15",9,"1-2 min","Addominali alti e bassi.")]},
+ U2:{title:"Upper 2",day:"Sabato",ci:3,sc:false,ex:[R("Dumbbell Incline Press",2,3,"8",8,"2-3 min","Panca inclinata 45°. Scapole retratte."),R("Pendlay Row",1,3,"10",7,"2-3 min","Da terra a ogni rep."),R("Weighted Dip",2,3,"6",7,"2-3 min","Discesa fino a 90°."),R("Eccentric-Accentuated Pull-Up",1,2,"AMRAP",10,"2-3 min","Negativa 3 sec."),R("Incline Shrug",0,2,"15-20",9,"30 sec","[A] A faccia in giù."),R("Bent Over Reverse Dumbbell Flye",0,2,"15-20",9,"30 sec","[A] MMC deltoidi posteriori."),R("Barbell o EZ Bar Curl",0,3,"12-15",9,"30 sec","[B] MMC bicipiti."),R("Skull Crusher",0,3,"8-10",9,"30 sec","[B] Su panca.")]},
+}},
+9:{t:"odd",lb:"Full Body · Forza (pre-test)",days:{
+ FB1:{title:"FB1 — Squat · OHP",day:"Lunedì",ci:0,sc:true,ex:[P("Back Squat",4,1,"2","87.5-92.5%",90,8.5,"4-5 min","Vicino al PR di 2 reps."),R("Squat Walk-Out",0,1,"10 sec",null,"4-5 min","NON squattare. Tieni in isometria. Pin alti + spotter."),P("Overhead Press",2,3,"6","80%",80,null,"2-3 min","Resetta ogni rep."),R("Leg Curl",1,2,"8-10",7,"1-2 min","Discesa lenta 3 sec."),R("Helms Row",1,2,"12-15",9,"1-2 min","Gomiti fuori e indietro a 45°."),R("Hammer Curl",0,2,"20-25",10,"1-2 min","Gomiti bloccati.")]},
+ FB2:{title:"FB2 — Deadlift · Bench",day:"Mercoledì",ci:1,sc:false,ex:[P("Deadlift",4,3,"4","80%",80,null,"3-5 min","Semi-scarico. Focus tecnica e bar speed."),P("Barbell Bench Press",4,1,"2","87.5-92.5%",90,9,"4-5 min","Vicino al PR di 2 reps."),P("Barbell Bench Press",0,2,"2","87.5%",87.5,null,"3-4 min","Focus tecnica esplosiva."),R("Hip Abduction",0,3,"15-20",9,"1-2 min","Iso hold 1 sec."),R("Weighted Pull-Up",1,3,"3-5",7,"2-3 min","Presa 1.5x spalle."),R("Floor Skull Crusher",1,3,"10-12",8,"1-2 min","Arco dietro la testa."),R("Standing Calf Raise",1,3,"8",9,"1-2 min","Pausa 1-2 sec in basso.")]},
+ FB3:{title:"FB3 — Squat · Dip",day:"Giovedì",ci:2,sc:false,ex:[P("Back Squat",4,3,"4","82.5%",82.5,null,"3-4 min","Upper back saldo."),R("Weighted Dip",2,3,"8",8,"2-3 min","Discesa fino a 90°."),R("Hanging Leg Raise",0,3,"10-12",9,"1-2 min","Ginocchia al petto."),R("Lat Pull-Over",1,3,"12-15",9,"1-2 min","Stretch e squeeze dorsali."),R("Incline Dumbbell Curl",1,2,"12-15",9,"1-2 min","Un braccio alla volta."),R("Face Pull",0,4,"15-20",9,"1-2 min","Retrai le scapole.")]},
+ FB4:{title:"FB4 — Deadlift pause · Bench pause",day:"Sabato",ci:3,sc:true,ex:[P("Pause Deadlift",4,4,"2","75%",75,null,"3-4 min","Pausa 3 sec."),P("Pause Barbell Bench Press",3,3,"5","77.5%",77.5,null,"2-3 min","Pausa 2-3 sec sul petto."),R("Chest-Supported T-Bar Row",1,3,"10",7,"1-2 min","Resta leggero."),R("Nordic Ham Curl",0,3,"6-8",8,"1-2 min","Scendi lentamente."),R("Dumbbell Shrug",0,3,"20-25",9,"1-2 min","Stretch in basso, squeeze in alto.")]},
+}},
+10:{t:"test",lb:"MAX TESTING · Opzione A",ts:true,days:{
+ T1:{title:"Squat Test",day:"Sessione 1",ci:0,sc:false,ex:[P("Back Squat",4,1,"AMRAP","90%",90,9.5,"4-5 min","Più reps possibili. Spotter obbligatorio!"),R("Single-Arm Lat Pulldown",1,2,"12",8,"2-3 min","Band se non c'è la lat machine."),R("Incline Dumbbell Curl",0,4,"12",8,"1-2 min","MMC bicipiti."),R("Standing Calf Raise",1,3,"12",8,"1-2 min","Pausa 1-2 sec in basso.")]},
+ T2:{title:"Bench Test",day:"Sessione 2",ci:1,sc:false,ex:[P("Barbell Bench Press",4,1,"AMRAP","90%",90,9.5,"4-5 min","Più reps possibili. Spotter obbligatorio!"),R("Leg Curl",1,3,"8-10",8,"2-3 min","Discesa lenta 3 sec."),R("Dumbbell Lateral Raise",0,2,"15-20",8,"1-2 min","Arco verso l'esterno."),R("Triceps Pressdown",1,3,"12",8,"1-2 min","Cavi o band.")]},
+ T3:{title:"Deadlift Test",day:"Sessione 3",ci:2,sc:false,ex:[P("Deadlift",4,1,"AMRAP","90%",90,9.5,"4-5 min","Più reps possibili!"),P("Overhead Press",2,3,"10","—",null,6,"2-3 min","Leggero. Resetta ogni rep."),R("Leg Extension",1,3,"12",7,"1-2 min","MMC coi quad."),R("Bicycle Crunch",0,4,"15",8,"1-2 min","Arrotonda la schiena.")]},
+}},
+11:{t:"even",lb:"DELOAD completo",dl:true,days:{
+ L1:{title:"Lower 1",day:"Lunedì",ci:0,sc:true,ex:[P("Deadlift",4,2,"3","75%",75,null,"3-5 min","Tecnica salda. Nessun cedimento."),R("Sumo Box Squat",2,2,"6",5,"2-3 min","RPE ridotto — scarico."),R("Leg Curl",1,2,"6-8",6,"1-2 min","Discesa lenta 3 sec."),R("Standing Calf Raise",1,2,"8-10",6,"1-2 min","Pausa 1-2 sec in basso."),R("Hanging Leg Raise",0,2,"10-12",6,"1-2 min","Ginocchia al petto.")]},
+ U1:{title:"Upper 1",day:"Mercoledì",ci:1,sc:false,ex:[P("Barbell Bench Press",3,2,"6","72.5%",72.5,null,"3-4 min","Pausa sul petto. Nessun cedimento."),R("Assisted Chin-Up",1,2,"8-10",7,"2-3 min","Con macchina o elastico."),P("Overhead Press",2,2,"4","75%",75,null,"2-3 min","Resetta ogni rep."),R("Chest-Supported Dumbbell Row",1,2,"12-15",7,"1-2 min","Panca inclinata."),R("Face Pull",0,2,"15-20",8,"30 sec","[A] RPE ridotto."),R("Dumbbell Lateral Raise",0,2,"15-20",8,"30 sec","[A] RPE ridotto."),R("Concentration Bicep Curl",0,2,"12-15",8,"30 sec","[B] RPE ridotto."),R("Triceps Pressdown",0,2,"12-15",8,"30 sec","[B] RPE ridotto.")]},
+ L2:{title:"Lower 2",day:"Giovedì",ci:2,sc:false,ex:[P("Back Squat",4,2,"6","70%",70,null,"3-4 min","Upper back saldo. Nessun cedimento."),R("Snatch-Grip Romanian Deadlift",2,2,"8",6,"2-3 min","RPE ridotto."),R("Leg Extension",1,2,"12-15",7,"1-2 min","MMC coi quad."),R("Standing Calf Raise",0,2,"15-20",8,"1-2 min","MMC polpacci."),R("Banded Lateral Walk",0,2,"15-20",8,"1-2 min","MMC glutei."),R("V Sit-Up",0,2,"12-15",8,"1-2 min","Addominali alti e bassi.")]},
+ U2:{title:"Upper 2",day:"Sabato",ci:3,sc:false,ex:[R("Close-Grip Bench Press",3,3,"10",6,"2-3 min","Presa larghezza spalle."),R("Chest-Supported Dumbbell Row",1,2,"10",6,"3-4 min","Panca inclinata."),R("Weighted Dip",2,2,"6",7,"2-3 min","Discesa fino a 90°."),R("Single-Arm Lat Pulldown",1,2,"10",8,"2-3 min","Band se non c'è la macchina."),R("Incline Shrug",0,2,"15-20",8,"30 sec","[A] RPE ridotto."),R("Upright Row",0,2,"15-20",8,"30 sec","[A] RPE ridotto."),R("Barbell o EZ Bar Curl",0,2,"12-15",8,"30 sec","[B] RPE ridotto."),R("Skull Crusher",0,2,"8-10",8,"30 sec","[B] Su panca.")]},
+}},
+};
+var ORDER={odd:["FB1","FB2","FB3","FB4"],even:["L1","U1","L2","U2"],test:["T1","T2","T3"]};
+
+function buildEx(day){
+  var exs=day.ex.slice();
+  if(day.sc)exs.push(SC());
+  if(!day.ts)exs.push(CORE(day.ci));
+  return exs;
+}
+
+function render(){
+  var wk=W[week],type=wk.t,order=ORDER[type];
+  if(!wk.days[dayKey])dayKey=order[0];
+  var day=wk.days[dayKey],exs=buildEx(day);
+  var mainIdx=[];
+  for(var i=0;i<exs.length;i++){if(!exs[i].isCore&&!exs[i].isCalf&&exs[i].isP)mainIdx.push(i);}
+  var fc=0;
+  mainIdx.forEach(function(i){var r=store[keyOf(week,dayKey,i)];if(r&&r.load&&String(r.load).trim()!=="")fc++;});
+  var allF=mainIdx.length>0&&fc===mainIdx.length;
+  var isDone=!!done["w"+week+"_"+dayKey];
+
+  var H="";
+
+  // week strip
+  H+='<div class="wstrip">';
+  for(var w in W){var wkk=W[w],n=parseInt(w);H+='<button class="wb'+(n===week?" on":"")+(wkk.dl?" dl":"")+(wkk.ts?" ts":"")+'" onclick="setWeek('+w+')">S'+w+'</button>';}
+  H+='</div><div class="wmeta">'+esc(wk.lb)+'</div>';
+
+  // day tabs
+  H+='<div class="dtabs">';
+  for(var di=0;di<order.length;di++){var dk=order[di];var dn=!!done["w"+week+"_"+dk];H+='<button class="dt'+(dk===dayKey?" on":"")+'" onclick="setDay(\''+dk+'\')">'+(dn?'<span class="dtick">✓</span>':'')+dk+'</button>';}
+  H+='</div>';
+
+  // hero
+  H+='<div class="hero"><div class="hcrumb">S'+week+' · '+(wk.ts?"Test":type==="odd"?"Full Body":"Upper/Lower")+'</div>';
+  H+='<div class="htitle">'+esc(day.title)+'</div><div class="hday">📅 '+esc(day.day)+'</div>';
+  if(wk.dl)H+='<div class="hnote dl">Settimana di scarico — carichi ridotti, nessun cedimento.</div>';
+  if(wk.ts)H+='<div class="hnote ts">Settimana test — AMRAP al 90%. Spotter obbligatorio.</div>';
+  H+='</div>';
+
+  // progress
+  var pct=mainIdx.length?Math.round(fc/mainIdx.length*100):0;
+  H+='<div class="prog"><div class="pbar"><div class="pfill" style="width:'+pct+'%"></div></div><div class="ptxt">'+fc+'/'+mainIdx.length+'</div></div>';
+
+  // warmup
+  H+='<div class="sec"><div class="sh" onclick="toggleWarm()"><span class="shbar"></span><span class="shtitle">Riscaldamento</span><span class="shcnt">'+(warmOpen?"▴ chiudi":"▾ apri")+'</span></div>';
+  if(warmOpen){
+    H+='<div class="wu"><span class="wudot"></span><div><div class="wun">Low Intensity Cardio</div><div class="wut">Cyclette o tapis. 100-135 bpm fino a leggera sudata.</div><div class="wum">5-10 min</div></div></div>';
+    H+='<div class="wu"><span class="wudot"></span><div><div class="wun">Foam Rolling</div><div class="wut">Zone di oggi, passaggi lenti sui punti tesi.</div><div class="wum">2-3 min</div></div></div>';
+    H+='<div class="wu"><span class="wudot"></span><div><div class="wun">Attivazione dinamica</div><div class="wut">Leg swing, glute squeeze, band pull-apart, rotazioni di cuffia.</div><div class="wum">3-5 min</div></div></div>';
+    H+='<div class="wu"><span class="wudot"></span><div><div class="wun">Piramide Big 3</div><div class="wut">Bilanciere vuoto ×15 → poi le percentuali abbinate a ogni esercizio principale.</div><div class="wum">prima dei principali</div></div></div>';
+    H+='<div class="wutip">Poco tempo? Taglia cardio e foam rolling, non la piramide.</div>';
+  }
+  H+='</div>';
+
+  // exercises
+  H+='<div class="sec"><div class="sh" style="cursor:default"><span class="shbar"></span><span class="shtitle">Esercizi</span><span class="shcnt">'+exs.length+' esercizi</span></div>';
+  for(var i=0;i<exs.length;i++){
+    var e=exs[i],k=keyOf(week,dayKey,i),rec=store[k]||{};
+    var filled=rec.load&&String(rec.load).trim()!=="";
+    var ghost=!filled?prevLoad(week,e.n):null;
+    var bigKey=BIG[e.n];
+    var calcLd=bigKey&&e.pc?calcLoad(e.pc,bigKey):null;
+    var wuS=bigKey&&e.pc?wuStr(bigKey):null;
+    var e1=bigKey&&rec.load&&rec.reps?est1rm(parseFloat(rec.load),parseFloat(rec.reps),rec.rpe?parseFloat(rec.rpe):null):null;
+    var isMain=!e.isCore&&!e.isCalf;
+    var cls="ex"+(filled&&isMain?" done":"")+(e.isCore?" core":"")+(e.isCalf?" calf":"");
+    var numLbl=e.isCore?"♦":e.isCalf?"◆":(i+1);
+
+    H+='<div class="'+cls+'"><div class="extop"><div class="exn">'+numLbl+'</div><div style="flex:1">';
+    H+='<div class="exname">'+esc(e.n)+'</div>';
+    if(GUIDE[e.n])H+='<div class="exguide">'+esc(GUIDE[e.n])+'</div>';
+    if(e.note)H+='<div class="exnote">'+esc(e.note)+'</div>';
+    H+='<div class="exmeta">';
+    if(e.wu>0)H+='<span class="tag"><b>'+e.wu+'</b> WU</span>';
+    H+='<span class="tag"><b>'+e.sets+'</b> set</span><span class="tag"><b>'+esc(String(e.reps))+'</b> reps</span>';
+    if(e.pl&&e.pl!=="—")H+='<span class="tag pct">'+esc(e.pl)+'</span>';
+    if(e.rpe!=null)H+='<span class="tag rpe">RPE '+e.rpe+'</span>';
+    H+='<span class="tag">⏱ '+esc(e.rest)+'</span>';
+    H+='</div></div></div>';
+
+    if(wuS)H+='<div class="wubox">Bar×15 poi: <b>'+esc(wuS)+'</b></div>';
+    else if(bigKey&&e.pc&&!rm[bigKey])H+='<div class="wubox" style="color:#e05c2a">Inserisci il 1RM di '+esc(RM_LB[bigKey])+' (bottone 1RM in basso)</div>';
+
+    if(calcLd)H+='<div class="calcbox">Carico di lavoro: <b>'+calcLd+' kg</b></div>';
+
+    if(isMain){
+      H+='<div class="loadrow"><div class="lcol"><label>Carico eseguito'+(ghost?' <span class="ghost">(ult. '+ghost+' kg)</span>':'')+'</label><div class="lbox"><input class="linput'+(filled?" filled":"")+'" inputmode="decimal" data-k="'+k+'" data-f="load" placeholder="'+(ghost||"—")+'" value="'+esc(rec.load||"")+'"><span class="lunit">KG</span></div></div>';
+      H+='<div class="lcol sm"><label>Reps</label><input class="mini" inputmode="numeric" data-k="'+k+'" data-f="reps" placeholder="'+esc(String(e.reps).split("-")[0])+'" value="'+esc(rec.reps||"")+'"></div>';
+      H+='<div class="lcol sm"><label>RPE</label><input class="mini" inputmode="decimal" data-k="'+k+'" data-f="rpe" placeholder="'+(e.rpe!=null?e.rpe:"–")+'" value="'+esc(rec.rpe||"")+'"></div></div>';
+    }
+    if(e1)H+='<div class="rmest">1RM stimato: <b>'+r2(e1)+' kg</b> · 80% ≈ '+r2(e1*.8)+' · 70% ≈ '+r2(e1*.7)+'</div>';
+    H+='</div>';
+  }
+  H+='</div>';
+
+  // finish
+  H+='<div class="finish'+(allF||isDone?" rdy":"")+'">';
+  H+='<div class="fmsg">'+(isDone?"Sessione completata ✓":(allF?"Tutti i principali compilati — fatto!":"Compila i carichi per completare"))+'</div>';
+  H+='<button class="fbtn'+(allF||isDone?" on":"")+'" '+(allF||isDone?"":"disabled")+'  onclick="toggleDone()">'+( isDone?"✓ Completata — tap per annullare":"✓ Segna come completata")+'</button>';
+  H+='</div>';
+
+  document.getElementById("root").innerHTML=H;
+
+  // bind inputs
+  var ins=document.querySelectorAll("input[data-k]");
+  for(var j=0;j<ins.length;j++){
+    ins[j].addEventListener("input",function(){
+      var k=this.getAttribute("data-k"),f=this.getAttribute("data-f");
+      if(!store[k])store[k]={};
+      store[k][f]=this.value;
+      saveAll();
+      if(f==="load")render();
+    });
+    ins[j].addEventListener("blur",function(){render();});
+  }
+}
+
+function setWeek(w){week=parseInt(w);var o=ORDER[W[week].t];if(!W[week].days[dayKey])dayKey=o[0];render();}
+function setDay(d){dayKey=d;render();}
+function toggleWarm(){warmOpen=!warmOpen;render();}
+function toggleDone(){var k="w"+week+"_"+dayKey;done[k]=!done[k];saveAll();render();}
+
+// 1RM overlay
+document.getElementById("rmfab").onclick=function(){
+  document.getElementById("rm_sq").value=rm.sq||"";
+  document.getElementById("rm_bp").value=rm.bp||"";
+  document.getElementById("rm_dl").value=rm.dl||"";
+  document.getElementById("rm_op").value=rm.op||"";
+  document.getElementById("rmoverlay").style.display="flex";
+};
+document.getElementById("rmoverlay").onclick=function(e){if(e.target===this)this.style.display="none";};
+document.getElementById("rmcancel").onclick=function(){document.getElementById("rmoverlay").style.display="none";};
+document.getElementById("rmsave").onclick=function(){
+  rm={sq:parseFloat(document.getElementById("rm_sq").value)||0,bp:parseFloat(document.getElementById("rm_bp").value)||0,dl:parseFloat(document.getElementById("rm_dl").value)||0,op:parseFloat(document.getElementById("rm_op").value)||0};
+  saveAll();document.getElementById("rmoverlay").style.display="none";render();
+};
+
+loadAll();
+loadAsync();
+window.addEventListener("beforeunload",saveAll);
+</script>
+</body>
+</html>
