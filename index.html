@@ -712,9 +712,7 @@ function render(){
     if(calcLd)H+='<div class="calcbox">Carico di lavoro: <b>'+calcLd+' kg</b></div>';
 
     if(hasWeight){
-      H+='<div class="loadrow"><div class="lcol"><label>Carico'+(ghost?' <span class="ghost">(ult. '+ghost+')</span>':'')+'</label><div class="lbox"><input class="linput'+(filled?" filled":"")+'" type="text" inputmode="decimal" data-k="'+k+'" data-f="load" placeholder="'+(ghost||"—")+'" value="'+esc(rec.load||"")+'"><span class="lunit">kg</span></div></div>';
-      H+='<div class="lcol sm"><label>Reps</label><input class="mini" inputmode="numeric" data-k="'+k+'" data-f="reps" placeholder="'+esc(String(e.reps).split("-")[0])+'" value="'+esc(rec.reps||"")+'"></div>';
-      H+='</div>';
+      H+='<div class="loadrow"><div class="lcol"><label>Carico'+(ghost?' <span class="ghost">(ult. '+ghost+')</span>':'')+'</label><div class="lbox"><input class="linput'+(filled?" filled":"")+'" type="text" inputmode="decimal" data-k="'+k+'" data-f="load" placeholder="'+(ghost||"—")+'" value="'+esc(rec.load||"")+'"><span class="lunit">kg</span></div></div></div>';
     }
     if(e1)H+='<div class="rmest">1RM stimato: <b>'+r2(e1)+' kg</b> &nbsp;&middot;&nbsp; 80% &asymp; '+r2(e1*.8)+' &middot; 70% &asymp; '+r2(e1*.7)+'</div>';
     H+='</div>';
