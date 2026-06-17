@@ -729,8 +729,10 @@ function render(){
     var isFirstBig=bigKey&&e.pc&&!seenBig[bigKey];
     if(isFirstBig)seenBig[bigKey]=true;
     if(isFirstBig){
+      // priorita: carico inserito ora > carico reale aggiustato (ghost) > carico calcolato dal 1RM > 1RM grezzo
       var wuBase=null;
       if(rec.load&&parseFloat(rec.load)>0)wuBase=parseFloat(rec.load);
+      else if(ghost&&parseFloat(ghost)>0)wuBase=parseFloat(ghost);
       else if(calcLd&&calcLd>0)wuBase=calcLd;
       var wuFinal=wuBase?wuStrFromLoad(wuBase):wuS;
       if(wuFinal)H+='<div class="wubox">Bar x15 poi: <b>'+esc(wuFinal)+'</b></div>';
