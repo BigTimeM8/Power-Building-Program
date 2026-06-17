@@ -142,10 +142,24 @@ function r2(x){return x==null?null:Math.round(x/2.5)*2.5;}
 function est1rm(w,reps,rpe){if(!w||!reps)return null;var rtf=Number(reps)+Math.max(0,10-(rpe==null?10:Number(rpe)));return w*(1+rtf/30);}
 function calcLoad(pc,key){var v=rm[key]||0;return v>0?r2(v*pc/100):null;}
 function wuStr(key){var v=rm[key]||0;if(!v)return null;function f(p){return r2(v*p);}return f(.4)+"x5 · "+f(.5)+"x4 · "+f(.6)+"x3 · "+f(.7)+"x2";}
+function wuStrFromLoad(baseLoad){if(!baseLoad||baseLoad<=0)return null;function f(p){return r2(baseLoad*p);}return f(.4)+"x5 · "+f(.5)+"x4 · "+f(.6)+"x3 · "+f(.7)+"x2";}
 function keyOf(wn,dk,i){return"w"+wn+"_"+dk+"_"+i;}
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
-function prevLoad(wn,name){
-  for(var pw=wn-1;pw>=1;pw--){var wk=W[pw];if(!wk)continue;for(var dk in wk.days){var exs=W[pw].days[dk].ex;for(var i=0;i<exs.length;i++){if(exs[i].n===name){var rec=store["w"+pw+"_"+dk+"_"+i];if(rec&&rec.load)return rec.load;}}}}
+function prevLoad(wn,name,targetReps){
+  for(var pw=wn-1;pw>=1;pw--){var wk=W[pw];if(!wk)continue;for(var dk in wk.days){var exs=W[pw].days[dk].ex;for(var i=0;i<exs.length;i++){if(exs[i].n===name){var rec=store["w"+pw+"_"+dk+"_"+i];if(rec&&rec.load){
+    var prevLoad=parseFloat(rec.load);
+    // se ho reps precedenti e target reps, aggiusto il carico
+    if(rec.reps&&targetReps&&!isNaN(parseFloat(rec.reps))&&!isNaN(parseFloat(targetReps))){
+      var prevReps=parseFloat(rec.reps);
+      var tReps=parseFloat(String(targetReps).split("-")[0]);
+      if(prevReps>0&&tReps>0&&prevReps!==tReps){
+        var est1rm=prevLoad*(1+prevReps/30);
+        var adjusted=r2(est1rm/(1+tReps/30));
+        if(adjusted>0)return adjusted;
+      }
+    }
+    return prevLoad;
+  }}}}}
   return null;
 }
 
@@ -654,7 +668,10 @@ function render(){
   var H="";
 
   H+='<div class="wstrip">';
-  for(var w in W){var wkk=W[w],n=parseInt(w);H+='<button class="wb'+(n===week?" on":"")+(wkk.dl?" dl":"")+(wkk.ts?" ts":"")+'" onclick="setWeek('+w+')">S'+w+'</button>';}
+  for(var w in W){var wkk=W[w],n=parseInt(w);// verifica se tutti i giorni della settimana sono completati
+    var worder=ORDER[wkk.t]||[];
+    var wAll=worder.length>0&&worder.every(function(d){return !!done["w"+w+"_"+d];});
+    H+='<button class="wb'+(n===week?" on":"")+(wkk.dl?" dl":"")+(wkk.ts?" ts":"")+'" onclick="setWeek('+w+')">'+(wAll?'<span style="color:#27a86a;margin-right:2px">✓</span>':'')+'S'+w+'</button>';}
   H+='</div><div class="wmeta">'+esc(wk.lb)+'</div>';
 
   H+='<div class="dtabs">';
@@ -675,18 +692,19 @@ function render(){
     H+='<div class="wu"><span class="wudot"></span><div><div class="wun">Low Intensity Cardio</div><div class="wut">Cyclette o tapis. 100-135 bpm fino a leggera sudata.</div><div class="wum">5-10 min</div></div></div>';
     H+='<div class="wu"><span class="wudot"></span><div><div class="wun">Foam Rolling</div><div class="wut">Zone di oggi, passaggi lenti sui punti tesi.</div><div class="wum">2-3 min</div></div></div>';
     H+='<div class="wu"><span class="wudot"></span><div><div class="wun">Attivazione dinamica</div><div class="wut">Leg swing, glute squeeze, band pull-apart, rotazioni di cuffia.</div><div class="wum">3-5 min</div></div></div>';
-    H+='<div class="wu"><span class="wudot"></span><div><div class="wun">Piramide Big 3</div><div class="wut">Bilanciere vuoto x15 poi le percentuali mostrate sotto ogni esercizio principale.</div><div class="wum">prima dei principali</div></div></div>';
+
     H+='<div class="wutip">Poco tempo? Taglia cardio e foam rolling, non la piramide.</div>';
   }
   H+='</div>';
 
+  var seenBig={};
   H+='<div class="sec"><div class="sh" style="cursor:default"><span class="shbar"></span><span class="shtitle">Esercizi</span><span class="shcnt">'+exs.length+' esercizi</span></div>';
   for(var i=0;i<exs.length;i++){
     var e=exs[i],k=keyOf(week,dayKey,i),rec=store[k]||{};
     var noWeight=!!NO_WEIGHT[e.n]||e.isCore;
     var hasWeight=!e.isCore&&!noWeight;
     var filled=hasWeight&&rec.load&&String(rec.load).trim()!=="";
-    var ghost=hasWeight&&!filled?prevLoad(week,e.n):null;
+    var ghost=hasWeight&&!filled?prevLoad(week,e.n,e.reps):null;
     var bigKey=BIG[e.n];
     var calcLd=bigKey&&e.pc?calcLoad(e.pc,bigKey):null;
     var wuS=bigKey&&e.pc?wuStr(bigKey):null;
@@ -707,12 +725,22 @@ function render(){
     H+='<span class="tag">&#8987; '+esc(e.rest)+'</span>';
     H+='</div></div></div>';
 
-    if(wuS)H+='<div class="wubox">Bar x15 poi: <b>'+esc(wuS)+'</b></div>';
-    else if(bigKey&&e.pc&&!rm[bigKey])H+='<div class="wubox" style="color:#e05c2a">Inserisci il 1RM (bottone in basso) per vedere i carichi</div>';
-    if(calcLd)H+='<div class="calcbox">Carico di lavoro: <b>'+calcLd+' kg</b></div>';
+    // avvicinamento: solo per il primo esercizio Big 3 nella sessione
+    var isFirstBig=bigKey&&e.pc&&!seenBig[bigKey];
+    if(isFirstBig)seenBig[bigKey]=true;
+    if(isFirstBig){
+      var wuBase=null;
+      if(rec.load&&parseFloat(rec.load)>0)wuBase=parseFloat(rec.load);
+      else if(calcLd&&calcLd>0)wuBase=calcLd;
+      var wuFinal=wuBase?wuStrFromLoad(wuBase):wuS;
+      if(wuFinal)H+='<div class="wubox">Bar x15 poi: <b>'+esc(wuFinal)+'</b></div>';
+      else H+='<div class="wubox" style="color:#e05c2a">Inserisci il 1RM per vedere i carichi</div>';
+    }
+    // calcLd usato come placeholder sotto
 
     if(hasWeight){
-      H+='<div class="loadrow"><div class="lcol"><label>Carico'+(ghost?' <span class="ghost">(ult. '+ghost+')</span>':'')+'</label><div class="lbox"><input class="linput'+(filled?" filled":"")+'" type="text" inputmode="decimal" data-k="'+k+'" data-f="load" placeholder="'+(ghost||"—")+'" value="'+esc(rec.load||"")+'"><span class="lunit">kg</span></div></div></div>';
+      var ph=ghost?ghost:(calcLd?calcLd+'':null);
+      H+='<div class="loadrow"><div class="lcol"><label>Carico</label><div class="lbox"><input class="linput'+(filled?" filled":"")+'" type="text" inputmode="decimal" data-k="'+k+'" data-f="load" placeholder="'+(ph||"—")+'" value="'+esc(rec.load||"")+'"><span class="lunit">kg</span></div></div></div>';
     }
     if(e1)H+='<div class="rmest">1RM stimato: <b>'+r2(e1)+' kg</b> &nbsp;&middot;&nbsp; 80% &asymp; '+r2(e1*.8)+' &middot; 70% &asymp; '+r2(e1*.7)+'</div>';
     H+='</div>';
